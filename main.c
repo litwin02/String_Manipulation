@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+// TODO: IMPLEMENT FUNCTION THAT WILL REPLACE NUMBER WITH ENGLISH SUBTITUTE
 enum EnglishNumbers{
     ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE
 };
@@ -11,24 +12,30 @@ enum EnglishNumbers{
 char* toUpper(char* string)
 {
     char* newString = malloc(strlen(string));
-    for(int i=0; i<strlen(string); i++)
+    int i;
+    for(i=0; i<strlen(string); i++)
     {
         newString[i] = toupper(string[i]);
     }
+    // Adding string termination at the end of the string
+    newString[i] = '\0';
     return newString;
 }
 
 char* toLower(char* string)
 {
     char* newString = malloc(strlen(string));
-    for(int i=0; i<strlen(string); i++)
+    int i;
+    for(i=0; i<strlen(string); i++)
     {
         newString[i] = tolower(string[i]);
     }
+    // Adding string termination at the end of the string
+    newString[i] = '\0';
     return newString;
 }
 
-char* modifyString(char* string, char separator, char* upOrDown)
+char* replaceWithSeparator(char* string, char separator, char* upOrDown)
 {
     int16_t stringLength = strlen(string);
     char* newString = malloc(stringLength);
@@ -38,8 +45,8 @@ char* modifyString(char* string, char separator, char* upOrDown)
     // to new string. So without offset, values would be skipped from the original string.
 
     int16_t offset = 0;
-
-    for(int i=0; i<stringLength; i++)
+    int i;
+    for(i=0; i<stringLength; i++)
     {
         // If a value in input string is alphanumeric, simply add it to new string
         if(isalnum(string[i]))
@@ -51,40 +58,40 @@ char* modifyString(char* string, char separator, char* upOrDown)
         {
             // Pretty ugly? First part checks on the first iteration if first char is alnum. If not, increase offset.
             // Second part chcecks if there are two non alnum values next to each other. If it is true, increase offset.
-            // Reason why it is togheter it's because in both cases it does the same thing, but I wrote comment on three lines to explain it :D
+            // Reason why it is togheter it's because in both cases it does the same thing so code is similar,
+            // but I wrote comment on four lines to explain it so it's not worth it :D
             if((i==0 && isalnum(string[i])==0) || (isalnum(string[i])==0 && isalnum(string[i+1])==0)){
                 offset++;
                 continue;
             }
-            // Check if the non alnum is on the end of the string. If it is, add termination sign and end end program
-            else if(isalnum(string[i])==0 && string[i+1]=='\0' ){
-                newString[i-offset]='\0';
-                break;
-            }
             // If it just one single non alnum value, replace it with separator
             else
-                newString[i-offset]=separator;
-
-
-            // To be continued
-            // for (int j = i; i < stringLength; j++)
-            // {
-            //     if(isalnum(string[i])==0)
-            //         offset++;
-            //     else
-            //         break;
-            // }
-            
-            
+                newString[i-offset]=separator;       
         }
     }
+    // Adding the string termination at the end of the string
+    newString[i-offset]='\0';
     return newString;
 }
 
+char* modifyString(char* string, char separator, char* upOrDown)
+{
+    char* tempString = replaceWithSeparator(string, separator, upOrDown);
+    int16_t tempLength = strlen(tempString);
+    char* newString = malloc(tempLength);
+    if(upOrDown=="UP")
+        newString = toUpper(tempString);
+    else if(upOrDown=="LOW")
+        newString = toLower(tempString);
+    else
+        return tempString;
+    
+    return newString;
+}
 
 int main(void)
 {
-    char str[] = "@!Hello!World$!$123)!";
+    char str[] = "!Hello!World$!$123)";
     char sep = '-';
-    printf("%s", modifyString(str, sep, ""));
+    printf("%s", modifyString(str, sep, "LOW"));
 }
