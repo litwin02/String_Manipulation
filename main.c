@@ -5,9 +5,9 @@
 #include <ctype.h>
 
 // TODO: IMPLEMENT FUNCTION THAT WILL REPLACE NUMBER WITH ENGLISH SUBTITUTE
-enum EnglishNumbers{
+typedef enum {
     ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE
-};
+} Number;
 
 char* toUpper(char* string)
 {
@@ -73,6 +73,52 @@ char* replaceWithSeparator(char* string, char separator, char* upOrDown)
     newString[i-offset]='\0';
     return newString;
 }
+
+char* replaceWithEnglishSubtitue(char* string)
+{
+    int16_t length = strlen(string);
+    char* newString = (char *)malloc((length+1)*sizeof(char));
+}
+
+char* numberToString(Number number)
+{
+    switch (number)
+    {
+    case ZERO:
+        return "zero";
+        break;
+    case ONE:
+        return "one";
+        break;
+    case TWO:
+        return "two";
+        break;
+    case THREE:
+        return "three";
+        break;
+    case FOUR:
+        return "four";
+        break;
+    case FIVE:
+        return "five";
+        break;
+    case SIX:
+        return "six";
+        break;
+    case SEVEN:
+        return "seven";
+        break;
+    case EIGHT:
+        return "eight";
+        break;
+    case NINE:
+        return "nine";
+        break;
+    default:
+        break;
+    }
+}
+
 
 char* modifyString(char* string, char separator, char* upOrDown)
 {
