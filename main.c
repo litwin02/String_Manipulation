@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-// TODO: IMPLEMENT FUNCTION THAT WILL REPLACE NUMBER WITH ITS ENGLISH SUBTITUTE
-
 char* toUpper(char* string)
 {
     char* newString = malloc(strlen(string));
@@ -32,7 +30,7 @@ char* toLower(char* string)
     return newString;
 }
 
-char* replaceWithSeparator(char* string, char separator, char* upOrDown)
+char* replaceWithSeparator(char* string, char separator)
 {
     int16_t stringLength = strlen(string);
     char* newString = malloc(stringLength);
@@ -54,26 +52,18 @@ char* replaceWithSeparator(char* string, char separator, char* upOrDown)
         }
         else
         {
-            // Pretty ugly? First part checks on the first iteration if first char is alnum. If not, increase offset.
-            // Second part chcecks if there are two non alnum values next to each other. If it is true, increase offset.
-            // Reason why it is togheter it's because in both cases it does the same thing so code is similar,
-            // but I wrote comment on four lines to explain it so it's not worth it :D
-            // if((i==0 && isalnum(string[i])==0) || (isalnum(string[i])==0 && isalnum(string[i+1])==0)){
-            //     offset++;
-            //     continue;
-            // }
+            // If there are two or more non alnum values next to each other, replace them with separator
             if((isalnum(string[i])==0 && isalnum(string[i+1])==0)){
                 offset++;
                 continue;
             }
             
-            // If it just one single non alnum value, replace it with separator
+            // If the non alnum value is found on the beggining, then start adding the separator
             else if(firstAlnum){
                 newString[i-offset]=separator;
                 continue;
             }
-            offset++;
-                       
+            offset++;        
         }
     }
     // Adding the string termination at the end of the string
@@ -81,24 +71,82 @@ char* replaceWithSeparator(char* string, char separator, char* upOrDown)
     return newString;
 }
 
+char* replaceNumberWithEnglishSubstitute(char* string)
+{
+    // Allocating memory for the new string
+    char* newString = malloc(sizeof(char)*(strlen(string)*3+1));
+    // If the memory allocation fails, return NULL
+    if (newString == NULL) {
+        return NULL;
+    }
+    newString[0] = '\0';
+    for(int i=0; i<strlen(string); i++)
+    {
+        if(isdigit(string[i]))
+        {
+            switch(string[i])
+            {
+                case '0':
+                    strcat(newString, "zero");
+                    break;
+                case '1':
+                    strcat(newString, "one");
+                    break;
+                case '2':
+                    strcat(newString, "two");
+                    break;
+                case '3':
+                    strcat(newString, "three");
+                    break;
+                case '4':
+                    strcat(newString, "four");
+                    break;
+                case '5':
+                    strcat(newString, "five");
+                    break;
+                case '6':
+                    strcat(newString, "six");
+                    break;
+                case '7':
+                    strcat(newString, "seven");
+                    break;
+                case '8':
+                    strcat(newString, "eight");
+                    break;
+                case '9':
+                    strcat(newString, "nine");
+                    break;
+            }
+        }
+        else
+        {
+            // creating a temporary string with the current character and adding it to the new string
+            char temp[2] = {string[i], '\0'};
+            strcat(newString, temp);
+        }
+    }
+    return newString;
+}
+
 char* modifyString(char* string, char separator, char* upOrDown)
 {
-    char* tempString = replaceWithSeparator(string, separator, upOrDown);
-    int16_t tempLength = strlen(tempString);
-    char* newString = malloc(tempLength);
+    char* tempString = replaceWithSeparator(string, separator);
+    char* modifiedString = malloc(strlen(tempString));
+    modifiedString = replaceNumberWithEnglishSubstitute(tempString);
+    char* finalString = malloc(strlen(modifiedString));
     if(upOrDown=="UP")
-        newString = toUpper(tempString);
+        finalString = toUpper(modifiedString);
     else if(upOrDown=="LOW")
-        newString = toLower(tempString);
+        finalString = toLower(modifiedString);
     else
-        return tempString;
+        return modifiedString;
     
-    return newString;
+    return finalString;
 }
 
 int main(void)
 {
-    char str[] = "!!!Hello!World$!$123)!!";
+    char str[] = "!!!Hello 1234 World!!!";
     char sep = '-';
     printf("%s", modifyString(str, sep, "LOW"));
 }
